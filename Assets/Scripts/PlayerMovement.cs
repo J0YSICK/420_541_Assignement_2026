@@ -22,6 +22,7 @@ public class PlayerMovement : MonoBehaviour
     private bool jumpRequested = false; // set in Update(), used later
     private bool doubleJumpRequested = false; // set in TryDoubleJump()
     private bool hasDoubleJumped = false;     // one per jump
+    private float spaceTimer;
 
 
     public bool IsGrounded => isGrounded;
@@ -51,11 +52,22 @@ public class PlayerMovement : MonoBehaviour
 
         // Calculate forward movement relative to current facing direction
         moveDirection = transform.forward * moveZ;
-
+        
         // 3. Handle Jump Input
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        if (Input.GetButtonDown("Jump"))
+        {
+            spaceTimer = 0f;
+        }
+
+        if (Input.GetButton("Jump"))
+        {
+            spaceTimer += Time.deltaTime;
+        }
+
+        if (Input.GetButtonUp("Jump") && isGrounded)
         {
             jumpRequested = true;
+
         }
     }
 
@@ -65,23 +77,30 @@ public class PlayerMovement : MonoBehaviour
  
         if (jumpRequested)
         {
-            Jump(jumpForce);
+            Invoke("Jump", 3f);
             jumpRequested = false;
         }
  
         // NEW: the second jump, in mid-air
         if (doubleJumpRequested)
         {
-            Jump(doubleJumpForce);
+            DoubleJump();
             doubleJumpRequested = false;
         }
     }
  
-    private void Jump(float force)
+    private void Jump()
     {
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f,
                                         rb.linearVelocity.z);
-        rb.AddForce(Vector3.up * force, ForceMode.VelocityChange);
+        rb.AddForce(Vector3.up * jumpForce*spaceTimer, ForceMode.VelocityChange);
+    }
+
+    private void DoubleJump()
+    {
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f,
+                                        rb.linearVelocity.z);
+        rb.AddForce(Vector3.up * doubleJumpForce, ForceMode.VelocityChange);
     }
 
 
@@ -92,12 +111,6 @@ public class PlayerMovement : MonoBehaviour
 
         // Apply movement while preserving vertical velocity (gravity/jumping)
         rb.linearVelocity = new Vector3(targetVelocity.x, rb.linearVelocity.y, targetVelocity.z);
-    }
-
-    private void Jump()
-    {
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-        rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
     }
 
     public bool TryDoubleJump()
