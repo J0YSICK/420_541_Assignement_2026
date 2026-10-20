@@ -23,12 +23,7 @@ public class PlayerAnimatorController : MonoBehaviour
         // On the ground? (controls Falling and ends the flip)
         bool grounded = movement.IsGrounded;
         animator.SetBool("IsGrounded", grounded);
- 
-        // When Fire1 (left mouse button / left Ctrl) is released, roll
-        if (Input.GetButtonUp("Fire1"))
-        {
-            animator.SetTrigger("doRoll");
-        }
+      
  
         if (grounded)
         {

@@ -10,13 +10,18 @@ public class SpeedBoostPickup : MonoBehaviour
     [Header("Boost")]
     [SerializeField] private float speedMultiplier = 2f;
     [SerializeField] private float duration = 5f;
-    [SerializeField] private float respawnTime = 20f;
+    [SerializeField] private float respawnTime = 30f;
 
     [Header("Sounds")]
     [SerializeField] private AudioClip pickupSound;
 
     private Renderer[] renderers;
     private Collider col;
+
+    private void Start(){
+        renderers = GetComponentsInChildren<Renderer>();
+        col = GetComponent<Collider>();
+    }
 
 
     // Called automatically when something enters this trigger
@@ -29,9 +34,6 @@ public class SpeedBoostPickup : MonoBehaviour
 
             StartCoroutine(Boost(other.GetComponentInParent<PlayerMovement>()));
             StartCoroutine(Respawn());
-
-            // Remove the coin from the scene: it's collected once and gone
-            Destroy(gameObject);
         }
     }
 
