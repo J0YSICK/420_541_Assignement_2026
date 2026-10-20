@@ -23,6 +23,7 @@ public class PlayerMovement : MonoBehaviour
     private bool doubleJumpRequested = false; // set in TryDoubleJump()
     private bool hasDoubleJumped = false;     // one per jump
     private float spaceTimer;
+    private bool canDoubleJump = false;
 
 
     public bool IsGrounded => isGrounded;
@@ -54,6 +55,11 @@ public class PlayerMovement : MonoBehaviour
         moveDirection = transform.forward * moveZ;
         
         // 3. Handle Jump Input
+
+        if(Input.GetButtonDown("Jump") && isGrounded && canDoubleJump){
+            TryDoubleJump();
+        }
+
         if (Input.GetButtonDown("Jump"))
         {
             spaceTimer = 0f;
@@ -121,6 +127,14 @@ public class PlayerMovement : MonoBehaviour
         doubleJumpRequested = true;
         hasDoubleJumped = true;
         return true;
+    }
+
+    public void MultiplySpeed(float multiplier){
+        moveSpeed *= multiplier;
+    }
+
+    public void SetDoubleJump(bool enabled){
+        canDoubleJump = enabled;
     }
 
 }
